@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=61.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gg-transfer"
+dynamic = ["version"]
+
+authors = [{name = "Matteo Tenca", email = "matteo.tenca@gmail.com"}]
+description = "gg-wave FSK file transfer utility"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Networking",
+    "Topic :: Communications",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+]
+urls = {Homepage = "https://github.com/matteotenca/gg-transfer"}
+dependencies = ["ggwave", "pyaudio"]
+
+[project.scripts]
+gg-transfer = "ggtransfer.__main__:_main"
+
+#[project.optional-dependencies]
+#testing = ["pytest"]
+
+[tool.setuptools]
+packages = ["ggtransfer"]
+platforms = ["POSIX"]
+include-package-data = false
+
+[tool.setuptools.dynamic]
+version = {attr = "ggtransfer.__version__"}
