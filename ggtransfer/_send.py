@@ -1,6 +1,5 @@
 import argparse
 import base64
-import pprint
 import sys
 import time
 from pathlib import Path
@@ -18,7 +17,7 @@ def _get_array(data: bytes | str) -> Tuple[List[bytes | str], int]:
     return ar, ln
 
 
-def send(args: argparse.Namespace) ->None:
+def send(args: argparse.Namespace) -> None:
     p: Optional[pyaudio.PyAudio] = None
     stream: Optional[pyaudio.Stream] = None
 
@@ -50,9 +49,7 @@ def send(args: argparse.Namespace) ->None:
             name = file_path.name
             if file_transfer_mode:
                 with open(file, "rb") as f:
-                    # with open("LICENSE.bin", "wb") as fw:
                     base = base64.urlsafe_b64encode(f.read()).decode("ascii")
-                    # base64.encode(f, fw)
                     ar, ln = _get_array(base)
                     header = '{0}"pieces": {1}, "filename": "{2}", "size": {3}{4}'.format(
                         "{", str(ln), name, str(size), "}"
@@ -62,15 +59,17 @@ def send(args: argparse.Namespace) ->None:
                     stream.write(waveform, len(waveform) // 4)
             else:
                 with open(file, "r") as f:
+                    print("Only the first 140 bytes will be sent.", flush=True, file=sys.stderr)
                     try:
-                        base = f.read()
+                        base = f.read(140)
                         ar, ln = _get_array(base)
                     except UnicodeDecodeError:
                         raise GgUnicodeError("Cannot send binary data as is, please use the "
                                              "--file-transfer option.")
         else:
             try:
-                base = sys.stdin.buffer.read().decode("ascii")
+                print("Only the first 140 bytes will be sent.", flush=True, file=sys.stderr)
+                base = sys.stdin.buffer.read(140).decode("ascii")
                 ar, ln = _get_array(base)
             except UnicodeDecodeError:
                 raise GgUnicodeError("Cannot send binary data read from pipes or STDIN.")
@@ -78,7 +77,7 @@ def send(args: argparse.Namespace) ->None:
         # waveform = ggwave.encode("VOX", protocolId=protocol, volume=60)
         # stream.write(waveform, len(waveform) // 4)
 
-        print("Sending data, length):", len(base), flush=True, file=sys.stderr)
+        print("Sending data, length:", len(base), flush=True, file=sys.stderr)
         q = 1
         totsize = 0
         t = time.time()
@@ -93,7 +92,7 @@ def send(args: argparse.Namespace) ->None:
         print()
         print("Time taken to encode waveform:", tt, flush=True, file=sys.stderr)
         print("Speed:", len(base) / tt, "B/s", flush=True, file=sys.stderr)
-    except KeyboardInterrupt as e:
+    except KeyboardInterrupt:
         return
     except GgIOError as e:
         print(e.msg, flush=True, file=sys.stderr)
