@@ -7,12 +7,11 @@ name = "gg-transfer"
 dynamic = ["version"]
 readme = "README.md"
 authors = [{name = "Matteo Tenca", email = "matteo.tenca@gmail.com"}]
-description = "gg-wave FSK file transfer utility"
+description = "FSK text/file transfer utility"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Intended Audience :: Information Technology",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: POSIX",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",

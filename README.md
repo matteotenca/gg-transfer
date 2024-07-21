@@ -1,18 +1,17 @@
 # gg-transfer
 
-[![License: GPLv3](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://opensource.org/licenses/MIT)
+[![License: GPLv3](https://img.shields.io/badge/license-GPLv3+-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.txt)
 
-
-## Tool to send/receive text/binary file over audio via gg-wave FSK modulation
+## Tool to send/receive text/binary file over audio via FSK modulation
 
 This small tool is intended to send/receive short text messages or whole binary files over audio.  
-It uses `gg-wave` library ([https://github.com/ggerganov/ggwave](https://github.com/ggerganov/ggwave)) to encode text messages or binary files, send
+It uses `ggwave` library ([https://github.com/ggerganov/ggwave](https://github.com/ggerganov/ggwave)) to encode text messages or binary files, send
 them over the audio interface, or decode them from the microphone.  
 
 This is a shell front-end which implements the sending/receiving of bare text or whole binary files, which are encoded in Base64.
 
 When in file transfer mode, it reads the file, encode it in Base64, and sends a header in JSON with some info about the file itself.
-Then splits the Base64-encoded string in 140 chars-long blocks, and send them: `gg-wave` encodes each block into audio 
+Then splits the Base64-encoded string in 140 chars-long blocks, and send them: `ggwave` encodes each block into audio 
 and `gg-transfer` plays them to the default audio interface.  
   
 The receieving part, while in file transfer mode, waits to receive the header, then reads the right number of blocks, assembles them
@@ -116,3 +115,7 @@ Got Header
 Filename: somefile.bin, Size: 482
 Piece 5/5 644 B
 ```
+
+### Contacts
+
+You can contact me from my GitHub page at [https://github.com/matteotenca/gg-transfer](https://github.com/matteotenca/gg-transfer)
