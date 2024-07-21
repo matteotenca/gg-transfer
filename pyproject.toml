@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "gg-transfer"
 dynamic = ["version"]
-
+readme = "README.md"
 authors = [{name = "Matteo Tenca", email = "matteo.tenca@gmail.com"}]
 description = "gg-wave FSK file transfer utility"
 classifiers = [
@@ -19,6 +19,7 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: System :: Networking",
     "Topic :: Communications",
@@ -35,7 +36,6 @@ gg-transfer = "ggtransfer.__main__:_main"
 
 [tool.setuptools]
 packages = ["ggtransfer"]
-platforms = ["POSIX"]
 include-package-data = false
 
 [tool.setuptools.dynamic]
