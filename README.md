@@ -1,6 +1,9 @@
 # gg-transfer
+---
+![PyPI - Status](https://img.shields.io/pypi/status/gg-transfer)
+![PyPI - License](https://img.shields.io/pypi/l/gg-transfer?color=blue)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/gg-transfer)
 
-[![License: GPLv3](https://img.shields.io/badge/license-GPLv3+-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.txt)
 
 ## Tool to send/receive text/binary file over audio via FSK modulation
 
@@ -29,6 +32,15 @@ There are nine different protocols to send data:
     7 = [DT] Fast (5,59 Bytes/s - 1125 Hz to 2625 Hz)
     8 = [DT] Fastest (11,17 Bytes/s - 1125 Hz to 2625 Hz)
 ```
+
+### Installation
+
+```bash
+$> pip install gg-transfer
+```
+
+Under Python version > 3.10 `ggwave` may not install
+
 
 ### Test installation
 

@@ -4,8 +4,11 @@ class GgTransferError(Exception):
     _PREFIX: str
 
     def __init__(self, message: str):
-        self._PREFIX = "\n *** ERROR: "
+        self._PREFIX = "*** ERROR: "
         self.msg = self._PREFIX + message
+
+    def __str__(self):
+        return self.msg
 
 
 class GgIOError(GgTransferError):
@@ -19,6 +22,14 @@ class GgIOError(GgTransferError):
 class GgUnicodeError(GgTransferError):
 
     _PREFIX: str = "Data type mismatch - "
+
+    def __init__(self, message: str):
+        super().__init__(self._PREFIX + message)
+
+
+class GgArgumentsError(GgTransferError):
+
+    _PREFIX: str = "Invalid arguments - "
 
     def __init__(self, message: str):
         super().__init__(self._PREFIX + message)

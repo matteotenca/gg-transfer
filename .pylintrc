@@ -1,2 +1,2 @@
 [MESSAGES CONTROL]
-disable=invalid-name, missing-docstring, too-many-instance-attributes, too-few-public-methods, logging-format-interpolation, consider-using-with, trailiing-whitespace
+disable=invalid-name, missing-docstring, too-many-instance-attributes, too-few-public-methods, logging-format-interpolation, consider-using-with, trailing-whitespace, c-extension-no-member

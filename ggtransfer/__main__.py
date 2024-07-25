@@ -1,15 +1,16 @@
 import argparse
+from typing import Any
 
-from ggtransfer._send import send
-from ggtransfer._receive import receive
+from ggtransfer._send import Sender
+from ggtransfer._receive import Receiver
 
 
-class MyHelpFormatter(argparse.RawTextHelpFormatter):
+class GgHelpFormatter(argparse.RawTextHelpFormatter):
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
 
-    def format_help(self):
+    def format_help(self) -> str:
         help_msg = self._root_section.format_help()
         return help_msg
 
@@ -18,14 +19,14 @@ def _main() -> None:
 
     # noinspection PyTypeChecker
     parser = argparse.ArgumentParser(prog="gg-transfer",
-                                     formatter_class=MyHelpFormatter,
+                                     formatter_class=GgHelpFormatter,
                                      description="Command line utility to modulate/demodulate data"
                                                  " via gg-wave.", )
     subparsers = parser.add_subparsers(required=True, help="send or receive data.")
 
     # noinspection PyTypeChecker
     sender = subparsers.add_parser(
-        "send", help="modulate data into audio signal.", formatter_class=MyHelpFormatter)
+        "send", help="modulate data into audio signal.", formatter_class=GgHelpFormatter)
     sender.add_argument(
         "-i", "--input", help="input file (use '-' for stdin).", metavar="<inputfile>")
     sender.add_argument(
@@ -51,7 +52,7 @@ def _main() -> None:
 
     # noinspection PyTypeChecker
     receiver = subparsers.add_parser(
-        "receive", help="demodulate data from audio signal.", formatter_class=MyHelpFormatter)
+        "receive", help="demodulate data from audio signal.", formatter_class=GgHelpFormatter)
     receiver.add_argument(
         "-o", "--output", help="output file (use '-' for stdout).", metavar="<outputfile>")
     receiver.add_argument(
@@ -68,9 +69,9 @@ def _main() -> None:
     args: argparse.Namespace = parser.parse_args()
 
     if args.command == "send":
-        send(args)
+        Sender(args).send()
     elif args.command == "receive":
-        receive(args)
+        Receiver(args).receive(getdata=False)
 
 
 if __name__ == '__main__':
