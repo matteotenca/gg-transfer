@@ -44,7 +44,7 @@ jobs:
         #CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_24
         CIBW_ARCHS_WINDOWS: auto
         CIBW_ARCHS_LINUX: auto
-        CIBW_SKIP: "cp*musl* cp*macos*"
+        CIBW_SKIP: "cp*musl* cp*macos* cp36*"
         CIBW_BUILD: "cp*-many* cp*-win_amd64*"
       with:
         package-dir: .
