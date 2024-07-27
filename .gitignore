@@ -1,8 +1,10 @@
 /.dmypy.json
 /venv/
-/ggtransfer.egg-info/
+/**/**egg-info/
 /.idea/
-/gg_transfer.egg-info/
 /**/**pycache**
 /gg-transfer.iml
-/dist/
+/**/dist/
+/**/build/
+/**/**pyd
+/_ggwave/

@@ -7,7 +7,7 @@ class GgTransferError(Exception):
         self._PREFIX = "*** ERROR: "
         self.msg = self._PREFIX + message
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.msg
 
 

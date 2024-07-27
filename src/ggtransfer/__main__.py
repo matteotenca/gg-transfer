@@ -1,8 +1,9 @@
 import argparse
 from typing import Any
-
-from ggtransfer._send import Sender
-from ggtransfer._receive import Receiver
+from ._send import Sender
+from ._receive import Receiver
+from ._exceptions import GgArgumentsError
+from . import __version__
 
 
 class GgHelpFormatter(argparse.RawTextHelpFormatter):
@@ -12,6 +13,9 @@ class GgHelpFormatter(argparse.RawTextHelpFormatter):
 
     def format_help(self) -> str:
         help_msg = self._root_section.format_help()
+        if help_msg:
+            help_msg = self._long_break_matcher.sub('\n\n', help_msg)
+            help_msg = help_msg.strip('\n') + '\n'
         return help_msg
 
 
@@ -19,14 +23,21 @@ def _main() -> None:
 
     # noinspection PyTypeChecker
     parser = argparse.ArgumentParser(prog="gg-transfer",
-                                     formatter_class=GgHelpFormatter,
-                                     description="Command line utility to modulate/demodulate data"
-                                                 " via gg-wave.", )
-    subparsers = parser.add_subparsers(required=True, help="send or receive data.")
+                                     # formatter_class=GgHelpFormatter,
+                                     description="Command line utility to send/receive "
+                                                 "files/strings via ggwave library (FSK).")
+    parser.add_argument(
+        "-V", "--version",
+        help="print version number.",
+        action="version", version=f"%(prog)s {__version__}")
+
+    subparsers = parser.add_subparsers(required=True, title="commands",
+                                       help="send or receive data.")
 
     # noinspection PyTypeChecker
     sender = subparsers.add_parser(
-        "send", help="modulate data into audio signal.", formatter_class=GgHelpFormatter)
+        "send", help="modulate data into audio signal.", formatter_class=GgHelpFormatter,
+        description="Command line utility to send/receive files/strings via ggwave library (FSK).")
     sender.add_argument(
         "-i", "--input", help="input file (use '-' for stdin).", metavar="<inputfile>")
     sender.add_argument(
@@ -52,7 +63,8 @@ def _main() -> None:
 
     # noinspection PyTypeChecker
     receiver = subparsers.add_parser(
-        "receive", help="demodulate data from audio signal.", formatter_class=GgHelpFormatter)
+        "receive", help="demodulate data from audio signal.", formatter_class=GgHelpFormatter,
+        description="Command line utility to send/receive files/strings via ggwave library (FSK).")
     receiver.add_argument(
         "-o", "--output", help="output file (use '-' for stdout).", metavar="<outputfile>")
     receiver.add_argument(
@@ -72,6 +84,8 @@ def _main() -> None:
         Sender(args).send()
     elif args.command == "receive":
         Receiver(args).receive(getdata=False)
+    else:
+        raise GgArgumentsError("No such command.")
 
 
 if __name__ == '__main__':

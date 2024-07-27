@@ -7,18 +7,21 @@
 
 ## Tool to send/receive text/binary file over audio via FSK modulation
 
-This small tool is intended to send/receive short text messages or whole binary files over audio.  
+This tool is intended to send/receive short text messages or whole binary files over audio.  
 It uses `ggwave` library ([https://github.com/ggerganov/ggwave](https://github.com/ggerganov/ggwave)) to encode text messages or binary files, send
-them over the audio interface, or decode them from the microphone.  
+them over the audio interface, or decode them from the microphone.
+
+It can be used - and its main purpose is - to send data through radio transceivers.  
 
 This is a shell front-end which implements the sending/receiving of bare text or whole binary files, which are encoded in Base64.
 
-When in file transfer mode, it reads the file, encode it in Base64, and sends a header in JSON with some info about the file itself.
-Then splits the Base64-encoded string in 140 chars-long blocks, and send them: `ggwave` encodes each block into audio 
-and `gg-transfer` plays them to the default audio interface.  
-  
-The receieving part, while in file transfer mode, waits to receive the header, then reads the right number of blocks, assembles them
-in a single Base64 string and decodes it into binary.
+In `--file-transfer` mode, the file is opened and read all at once, then is encoded in Base64, and a header in JSON
+with some info about the file itself is sent. The Base64 encoded string is splitted into 132 bytes/long chunks, and a 
+CRC32 is added at the begin of the block to reach the maximum block size allowed by `ggwave`, 140 bytes.
+The CRCs are inserted shifted by one block to be sure the blocks arrive in the right order. At last, the checksum of the whole file
+is checked against the one received in the header.
+
+The standard behaviour is to play/record audio to/from the default audio devices.  
 
 There are nine different protocols to send data:
 ```
@@ -39,7 +42,12 @@ There are nine different protocols to send data:
 $> pip install gg-transfer
 ```
 
-Under Python version > 3.10 `ggwave` may not install
+##### Warning:
+**Under python version `>= 3.11`, `ggwave` may not install properly.**  
+To work around the problem, you should:
+1. Install `wheel`, `setuptools` and `cython` by hand with `pip`
+2. `export` (`set` under Windows) the variable `GGWAVE_USE_CYTHON` as `True`
+3. Issue the `pip install ggwave` command. A compiler is needed, i.e. `gcc` or `MSVSC`.
 
 
 ### Test installation
@@ -56,6 +64,7 @@ $> pip install --user -e .
 ```
 usage: gg-transfer send [-h] [-i <inputfile>] [-p {0,1,2,3,4,5,6,7,8}] [-f]
 
+Command line utility to send/receive files/strings via ggwave library (FSK).
 
 options:
   -h, --help            show this help message and exit
@@ -78,6 +87,7 @@ options:
 ```
 usage: gg-transfer receive [-h] [-o <outputfile>] [-f] [-w]
 
+Command line utility to send/receive files/strings via ggwave library (FSK).
 
 options:
   -h, --help            show this help message and exit
@@ -91,19 +101,17 @@ options:
 ###### Sender side
 ```bash
 $> echo "Hello world" | gg-transfer send --protocol 2
-Only the first 140 bytes will be sent.
 Sending data, length: 16
 Piece 1/1 16 B
-Time taken to encode waveform: 1.3006865978240967
-Speed: 12.301195404616463 B/s
+Time taken to encode waveform: 1.2990546226501465
+Speed (payload only): 12.316649139324932 B/s
 $>
 ```
 ###### Receiver side
 ```bash
 $> gg-transfer receive
 Listening ... Press Ctrl+C to stop
-Got message
-"Hello world"
+Hello world
 [...]
 ```
 
@@ -112,20 +120,40 @@ Got message
 ###### Sender side
 ```bash
 $> gg-transfer send --protocol 2 --input somefile.bin --file-transfer
-Sending header, length: 57
-Sending data, length: 644
-Piece 5/5 644 B
-Time taken to encode waveform: 23.129117012023926
-Speed: 27.84369155403596 B/s
+Sending header, length: 71
+Pieces: 2
+Sending data, length: 176
+Piece 2/2 176 B
+Time taken to encode waveform: 6.816471338272095
+Speed (size of encoded payload + CRC): 23.47255523567687 B/s
+Speed (payload only): 17.311009486311693 B/s
 $>
 ```
 ###### Receiver side
 ```bash
 $> gg-transfer.exe receive --output /tmp/out.bin --file-transfer
 Listening ... Press Ctrl+C to stop
-Got Header
-Filename: somefile.bin, Size: 482
-Piece 5/5 644 B
+Got header - Filename: .gitignore, Size: 118, CRC32: bec88992, Total pieces: 2
+Piece 2/2 176 B
+File received, CRC correct!
+```
+
+#### From code:
+
+###### Sender side
+```python
+import ggtransfer
+
+s = ggtransfer.Sender(protocol=2)
+s.send("1234567890" * 15)
+```
+
+###### Receiver side
+```python
+import ggtransfer
+
+r = ggtransfer.Receiver(file_transfer=False)
+rr = r.receive()
 ```
 
 ### Contacts

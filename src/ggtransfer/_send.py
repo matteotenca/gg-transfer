@@ -3,13 +3,11 @@ import base64
 import binascii
 import sys
 import time
-from pathlib import Path
-from typing import List, Optional, Tuple
-
 import pyaudio
 import ggwave
-
-from ggtransfer._exceptions import GgIOError, GgUnicodeError, GgArgumentsError
+from pathlib import Path
+from typing import List, Optional, Tuple
+from ._exceptions import GgIOError, GgUnicodeError, GgArgumentsError
 
 
 def _get_array(data: str, crc: bool = False) -> Tuple[List[str], int]:

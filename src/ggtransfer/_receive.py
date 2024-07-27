@@ -6,11 +6,9 @@ import json
 import sys
 from pathlib import Path
 from typing import Optional, Any, BinaryIO, TextIO, Union
-
 import pyaudio
 import ggwave
-
-from ggtransfer._exceptions import GgIOError
+from ._exceptions import GgIOError
 
 
 class Receiver:
@@ -48,7 +46,7 @@ class Receiver:
             p = pyaudio.PyAudio()
 
             stream = p.open(format=pyaudio.paFloat32, channels=1, rate=48000,
-                            input=True, frames_per_buffer=4096)
+                            input=True, frames_per_buffer=1024)
 
             ggwave.disableLog()
             par = ggwave.getDefaultParameters()
@@ -75,7 +73,7 @@ class Receiver:
             if not getdata:
                 print('Listening ... Press Ctrl+C to stop', file=sys.stderr, flush=True)
             while True:
-                data = stream.read(4096, exception_on_overflow=False)
+                data = stream.read(1024, exception_on_overflow=False)
                 res = ggwave.decode(instance, data)
                 if res is not None:
                     st: str = res.decode("utf-8")
@@ -151,7 +149,7 @@ class Receiver:
                 stream.close()
             if p is not None:
                 p.terminate()
-        if getdata:
+        if getdata and isinstance(output, io.BytesIO):
             ret: str = output.getvalue().decode("utf-8")
             return ret
         return None

@@ -21,7 +21,7 @@ class MyTestCase(unittest.TestCase):
     @unittest.skip("skipping test_receive...")
     def test_receive(self) -> None:
         r = ggtransfer.Receiver(file_transfer=False)
-        rr = r.receive(getdata=False)
+        rr = r.receive()
         self.assertIsInstance(rr, str)
         print("-" * 30)
         print(rr)
