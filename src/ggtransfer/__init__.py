@@ -1,4 +1,4 @@
-__version__ = '0.2.1'
+__version__ = '0.1.4'
 from ._send import Sender
 from ._receive import Receiver
 
