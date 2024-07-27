@@ -31,8 +31,6 @@ jobs:
         python -m pip install --upgrade wheel setuptools cython
         export GGWAVE_USE_CYTHON=True
         python -m pip install ggwave pyaudio
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-           
     - name: Build sdist
       run: pipx run build --sdist
     - uses: actions/upload-artifact@v4
