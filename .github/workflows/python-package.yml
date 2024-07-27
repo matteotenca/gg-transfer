@@ -37,11 +37,18 @@ jobs:
       env:
         CIBW_BEFORE_ALL_LINUX: >
           yum -y install portaudio-devel
-        CIBW_BEFORE_BUILD_LINUX: >
-          python -m pip install --upgrade wheel setuptools cython &&
-          GGWAVE_USE_CYTHON=True python -m pip install ggwave pyaudio
+#        CIBW_BEFORE_BUILD_LINUX: >
+#          python -m pip install --upgrade wheel setuptools cython &&
+#          GGWAVE_USE_CYTHON=True python -m pip install ggwave pyaudio
         #CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_24
         CIBW_ARCHS: x86_64
         CIBW_BUILD: cp312-manylinux*
-        
-
+      with:
+        package-dir: .
+        output-dir: wheelhouse
+    - name: Run Test
+      run: python -m unittest tests/test_send_msg.py
+    - uses: actions/upload-artifact@v4
+      with:
+        name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
+        path: ./wheelhouse/*.whl

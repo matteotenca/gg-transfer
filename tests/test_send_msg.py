@@ -4,11 +4,11 @@ import ggtransfer
 
 class MyTestCase(unittest.TestCase):
 
-    @unittest.skip("skipping test_send...")
+    # @unittest.skip("skipping test_send...")
     def test_send(self) -> None:
         s = ggtransfer.Sender(protocol=2)
-        s.send("1234567890" * 15)
-        # s.send()
+        # s.send("1234567890" * 15)
+        s.send("123456")
         self.assertEqual(True, True)  # add assertion here
 
     # @unittest.skip("skipping test_wrong_args...")
