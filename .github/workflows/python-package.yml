@@ -41,7 +41,7 @@ jobs:
 #          python -m pip install --upgrade wheel setuptools cython &&
 #          GGWAVE_USE_CYTHON=True python -m pip install ggwave pyaudio
         #CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_24
-        CIBW_ARCHS: any64
+        CIBW_ARCHS: auto64
         CIBW_BUILD: cp310* cp312*
       with:
         package-dir: .
