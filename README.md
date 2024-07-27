@@ -16,8 +16,8 @@ It can be used - and its main purpose is - to send data through radio transceive
 This is a shell front-end which implements the sending/receiving of bare text or whole binary files, which are encoded in Base64.
 
 In `--file-transfer` mode, the file is opened and read all at once, then is encoded in Base64, and a header in JSON
-with some info about the file itself is sent. The Base64 encoded string is splitted into 132 bytes/long chunks, and a 
-CRC32 is added at the begin of the block to reach the maximum block size allowed by `ggwave`, 140 bytes.
+with some info about the file itself is sent. The Base64 encoded string is split into 132 bytes/long chunks, and a 
+CRC32 is added at the beginning of the block to reach the maximum block size allowed by `ggwave`, 140 bytes.
 The CRCs are inserted shifted by one block to be sure the blocks arrive in the right order. At last, the checksum of the whole file
 is checked against the one received in the header.
 
