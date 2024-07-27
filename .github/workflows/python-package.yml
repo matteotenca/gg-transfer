@@ -42,7 +42,7 @@ jobs:
 #          GGWAVE_USE_CYTHON=True python -m pip install ggwave pyaudio
         #CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_24
         CIBW_ARCHS: auto64
-        CIBW_BUILD: cp310* cp312*
+        CIBW_BUILD: cp310-many* cp312-many* cp310-win_amd64* cp312-win_amd64*
       with:
         package-dir: .
         output-dir: wheelhouse
