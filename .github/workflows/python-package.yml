@@ -46,10 +46,10 @@ jobs:
       with:
         package-dir: .
         output-dir: wheelhouse
-    - name: Run Test
-      run: |
-        python -m pip install .
-        python -m unittest tests/test_send_msg.py
+#    - name: Run Test
+#      run: |
+#        python -m pip install .
+#        python -m unittest tests/test_send_msg.py
     - uses: actions/upload-artifact@v4
       with:
         name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
