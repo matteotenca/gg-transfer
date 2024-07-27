@@ -4,7 +4,9 @@ import binascii
 import sys
 import time
 import pyaudio
-import ggwave
+
+
+import ggtransfer.ggwave as ggwave
 from pathlib import Path
 from typing import List, Optional, Tuple
 from ._exceptions import GgIOError, GgUnicodeError, GgArgumentsError

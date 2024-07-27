@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 from typing import Optional, Any, BinaryIO, TextIO, Union
 import pyaudio
-import ggwave
+import ggtransfer.ggwave as ggwave
 from ._exceptions import GgIOError
 
 

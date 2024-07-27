@@ -1,5 +1,6 @@
 [build-system]
-requires = ["setuptools>=61.2"]
+requires = ["setuptools>=61.2", "cython>=3.0.0;python_version>='3.11.0'",
+    "cython>=0.29.28;python_version<'3.11.0'", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -24,7 +25,7 @@ classifiers = [
     "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
 ]
 urls = {Homepage = "https://github.com/matteotenca/gg-transfer"}
-dependencies = ["pyaudio", "ggwave"]
+dependencies = ["pyaudio"]
 
 [project.scripts]
 gg-transfer = "ggtransfer.__main__:_main"
@@ -37,8 +38,8 @@ include-package-data = false
 version = {attr = "ggtransfer.__version__"}
 
 [tool.setuptools.packages.find]
-#where = ["src", "src/ggtransfer"]
-where = ["src"]
-include = ["ggtransfer"]
-#include = ["ggtransfer", "ggwave"]  # alternatively: `exclude = ["additional*"]`
+where = ["src", "src/ggtransfer"]
+#where = ["src"]
+#include = ["ggtransfer"]
+include = ["ggtransfer", "ggwave"]  # alternatively: `exclude = ["additional*"]`
 #namespaces = false
