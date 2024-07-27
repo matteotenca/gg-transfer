@@ -36,7 +36,7 @@ jobs:
         # to supply options, put them in 'env', like:
       env:
         CIBW_BEFORE_ALL_LINUX: >
-          apt-get -y install portaudio-dev
+          yum -y install portaudio-devel
         CIBW_BEFORE_BUILD_LINUX: >
           python -m pip install --upgrade wheel setuptools cython &&
           GGWAVE_USE_CYTHON=True python -m pip install ggwave pyaudio
