@@ -30,15 +30,11 @@ dependencies = ["pyaudio", "ggwave"]
 gg-transfer = "ggtransfer.__main__:_main"
 
 [tool.setuptools]
-#packages = ["ggtransfer"]
 include-package-data = false
 
 [tool.setuptools.dynamic]
 version = {attr = "ggtransfer.__version__"}
 
 [tool.setuptools.packages.find]
-#where = ["src", "src/ggtransfer"]
 where = ["src"]
 include = ["ggtransfer"]
-#include = ["ggtransfer", "ggwave"]  # alternatively: `exclude = ["additional*"]`
-#namespaces = false

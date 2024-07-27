@@ -33,3 +33,11 @@ class GgArgumentsError(GgTransferError):
 
     def __init__(self, message: str):
         super().__init__(self._PREFIX + message)
+
+
+class GgChecksumError(GgTransferError):
+
+    _PREFIX: str = "Checksum error - "
+
+    def __init__(self, message: str):
+        super().__init__(self._PREFIX + message)

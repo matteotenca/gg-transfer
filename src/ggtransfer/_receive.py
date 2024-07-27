@@ -4,11 +4,12 @@ import binascii
 import io
 import json
 import sys
+import time
 from pathlib import Path
 from typing import Optional, Any, BinaryIO, TextIO, Union
 import pyaudio
 import ggwave
-from ._exceptions import GgIOError
+from ._exceptions import GgIOError, GgChecksumError
 
 
 class Receiver:
@@ -69,6 +70,7 @@ class Receiver:
             size = 0
             last_crc: str = ""
             crc_file: str = ""
+            start_time: float = 0
 
             if not getdata:
                 print('Listening ... Press Ctrl+C to stop', file=sys.stderr, flush=True)
@@ -93,6 +95,7 @@ class Receiver:
                             print(f"Piece {i}/{pieces} 0 B", end="\r", flush=True,
                                   file=sys.stderr)
                         started = True
+                        start_time = time.time()
                     elif started and self.file_transfer_mode:
                         if i < pieces:
                             if i == 0:
@@ -101,7 +104,8 @@ class Receiver:
                                 crc32_r = st[0:8]
                                 crc32_c = binascii.crc32(buf[-132:].encode())
                                 fixed_length_hex = f'{crc32_c:08x}'
-                                assert fixed_length_hex == crc32_r
+                                if not fixed_length_hex == crc32_r:
+                                    raise GgChecksumError(f"Received block's checksum ({fixed_length_hex}) is different from the expected: {crc32_r}.")
                             buf += st[8:]
                             i += 1
                             if not getdata:
@@ -121,13 +125,21 @@ class Receiver:
                     last_block_len = len(buf) % 132
                     crc32_c = binascii.crc32(buf[-last_block_len:].encode())
                     fixed_length_hex= f'{crc32_c:08x}'
-                    assert fixed_length_hex == last_crc
+                    if not fixed_length_hex == last_crc:
+                        raise GgChecksumError(f"Received block's checksum ({fixed_length_hex}) is different from the expected: {last_crc}.")
                     decoded_data = base64.urlsafe_b64decode(buf)
                     crc32_c = binascii.crc32(decoded_data)
                     fixed_length_hex = f'{crc32_c:08x}'
-                    assert fixed_length_hex == crc_file
+                    if not fixed_length_hex == crc_file:
+                        raise GgChecksumError(f"File's checksum ({fixed_length_hex}) is different from the expected: {crc_file}.")
                     output.write(decoded_data)
                     output.flush()
+                    if not getdata and self.file_transfer_mode:
+                        elapsed_time = time.time() - start_time
+                        print("Speed (size of encoded payload + CRC):", len(buf) / elapsed_time, "B/s", flush=True,
+                              file=sys.stderr)
+                        if size:
+                            print("Speed (payload only):", size / elapsed_time, "B/s", flush=True, file=sys.stderr)
                     if not is_stdout and not getdata:
                         output.close()
                         stats = file_path.stat()
@@ -137,6 +149,9 @@ class Receiver:
                             print("\nFile received, CRC correct!", file=sys.stderr, flush=True)
                     break
         except KeyboardInterrupt:
+            return None
+        except GgChecksumError as e:
+            print(e.msg, file=sys.stderr, flush=True)
             return None
         except GgIOError as e:
             print(e.msg, file=sys.stderr, flush=True)

@@ -30,7 +30,7 @@ class Sender:
 
     def __init__(self, args: Optional[argparse.Namespace] = None, inputfile: Optional[str] = None,
                  protocol: int = 0, file_transfer: bool = False):
-        # try:
+
         if args is not None and isinstance(args, argparse.Namespace):
             self.protocol = args.protocol
             self.file_transfer_mode = args.file_transfer
@@ -45,13 +45,6 @@ class Sender:
             self._script = False
         else:
             raise GgArgumentsError("Wrong set of arguments.")
-
-        # except GgArgumentsError as e:
-            # print(e.msg, flush=True, file=sys.stderr)
-            # raise e
-        # except Exception as e:
-            # print(e)
-            # raise e
 
     def send(self, msg: Optional[str] = None) -> None:
         p: Optional[pyaudio.PyAudio] = None
