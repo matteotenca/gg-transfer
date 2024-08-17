@@ -1,5 +1,7 @@
+import tempfile
 import unittest
 import wave
+from pathlib import Path
 
 import pyaudio
 
@@ -13,23 +15,23 @@ class PyAudio(unittest.TestCase):
         CHANNELS = 1
         RATE = 48000
         RECORD_SECONDS = 20
-        wf: wave.Wave_write = wave.open(r'r:\output.wav', 'w')
-        if wf:
+        out_file = Path(tempfile.gettempdir()).absolute().joinpath('test.wav')
+        wf: wave.Wave_write
+        with wave.open(str(out_file), 'w') as wf:
+
             p = pyaudio.PyAudio()
             wf.setnchannels(CHANNELS)
             wf.setsampwidth(p.get_sample_size(FORMAT))
             wf.setframerate(RATE)
 
             stream = p.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True)
-
-            print(f'Recording {RECORD_SECONDS} secs...')
+            print(f'Recording {RECORD_SECONDS} secs into {out_file}...')
             for _ in range(0, RATE // CHUNK * RECORD_SECONDS):
                 wf.writeframes(stream.read(CHUNK))
             print('Done')
-
+            stream.stop_stream()
             stream.close()
             p.terminate()
-            wf.close()
         self.assertEqual(True, True)  # add assertion here
 
 

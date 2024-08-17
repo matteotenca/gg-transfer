@@ -46,6 +46,8 @@ class Sender:
         else:
             raise GgArgumentsError("Wrong set of arguments.")
 
+        self._sample_rate = 48000
+
     def send(self, msg: Optional[str] = None) -> None:
         p: Optional[pyaudio.PyAudio] = None
         stream: Optional[pyaudio.Stream] = None
@@ -63,7 +65,7 @@ class Sender:
             # 7 = [DT] Fast
             # 8 = [DT] Fastest
 
-            stream = p.open(format=pyaudio.paFloat32, channels=1, rate=48000, output=True,
+            stream = p.open(format=pyaudio.paFloat32, channels=1, rate=self._sample_rate, output=True,
                             frames_per_buffer=4096)
             if self.input is not None and self.input != "-" and msg is None:
                 file_path = Path(self.input)
@@ -83,6 +85,7 @@ class Sender:
                                   ' "crc": "{4}"{5}').format(
                             "{", str(ln), name, str(size), fixed_length_hex, "}"
                         )
+                        stream.write(b'0' * 4 * self._sample_rate * 1)
                         print("Sending header, length:", len(header), flush=True, file=sys.stderr)
                         print("Pieces:", ln, flush=True, file=sys.stderr)
                         waveform = ggwave.encode(header, protocolId=self.protocol, volume=60)
@@ -132,6 +135,7 @@ class Sender:
                     print(f"Piece {q}/{ln} {totsize} B", end="\r", flush=True, file=sys.stderr)
                 q += 1
             tt = time.time() - t
+            stream.write(b'0' * 4 * self._sample_rate * 1)
             if self._script:
                 print()
                 print("Time taken to encode waveform:", tt, flush=True, file=sys.stderr)

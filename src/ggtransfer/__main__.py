@@ -19,6 +19,14 @@ class GgHelpFormatter(argparse.RawTextHelpFormatter):
         return help_msg
 
 
+def is_postive_int(val: int) -> int:
+    # try:
+    val_int = int(val)
+    if val_int > 0:
+        return val_int
+    raise argparse.ArgumentTypeError("number of pieces must be a positive integer.")
+
+
 def _main() -> None:
 
     # noinspection PyTypeChecker
@@ -75,6 +83,10 @@ def _main() -> None:
         "-w", "--overwrite",
         help="overwrite output file if it exists.",
         action="store_true", default=False)
+    receiver.add_argument(
+        "-n", "--tot-pieces",
+        help="receive this number of pieces and exit. Minimum is 1, default no limit.",
+        default=-1, type=is_postive_int)
 
     receiver.set_defaults(command="receive")
 

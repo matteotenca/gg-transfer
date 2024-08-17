@@ -9,20 +9,24 @@ from pathlib import Path
 from typing import Optional, Any, BinaryIO, TextIO, Union
 import pyaudio
 import ggwave
+
 from ._exceptions import GgIOError, GgChecksumError
 
 
 class Receiver:
-    def __init__(self, args: Optional[argparse.Namespace] = None, output_file: Optional[str] = None,
-                 file_transfer: bool = False, overwrite: bool = False) -> None:
+    def __init__(self, args: Optional[argparse.Namespace] = None,
+                 output_file: Optional[str] = None, file_transfer: bool = False,
+                 overwrite: bool = False, tot_pieces: int = -1) -> None:
         if args is not None:
             self.outputfile = args.output
             self.file_transfer_mode = args.file_transfer
             self.overwrite = args.overwrite
+            self.tot_pieces: int = args.tot_pieces
         else:
             self.outputfile = output_file
             self.file_transfer_mode = file_transfer
             self.overwrite = overwrite
+            self.tot_pieces = tot_pieces
 
     def receive(self, getdata: bool = True) -> Optional[str]:
         p: Optional[pyaudio.PyAudio] = None
@@ -118,7 +122,10 @@ class Receiver:
                         #     print("Got message", file=sys.stderr, flush=True)
                         output.write(res)
                         output.flush()
+                        i += 1
                         if getdata:
+                            break
+                        if i >= self.tot_pieces != -1:
                             break
 
                 if i >= pieces and started:

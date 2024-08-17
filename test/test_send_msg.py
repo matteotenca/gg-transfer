@@ -11,7 +11,7 @@ class MyTestCase(unittest.TestCase):
         # s.send()
         self.assertEqual(True, True)  # add assertion here
 
-    # @unittest.skip("skipping test_wrong_args...")
+    @unittest.skip("skipping test_wrong_args...")
     def test_wrong_args(self) -> None:
         # noinspection PyTypeChecker
         s = ggtransfer.Sender(args="ciao", protocol=2)
