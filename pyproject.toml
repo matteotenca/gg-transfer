@@ -23,7 +23,7 @@ classifiers = [
     "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
 ]
 urls = {Homepage = "https://github.com/matteotenca/gg-transfer"}
-dependencies = ["pyaudio", "ggwave-wheels"]
+dependencies = ["pyaudio", "ggwave-wheels==0.4.2.3"]
 
 [project.scripts]
 gg-transfer = "ggtransfer.__main__:_main"

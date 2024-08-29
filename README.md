@@ -12,7 +12,7 @@ This tool is intended to send/receive short text messages or whole binary files 
 It uses `ggwave` library ([https://github.com/ggerganov/ggwave](https://github.com/ggerganov/ggwave)) to encode text messages or binary files, send
 them over the audio interface, or decode them from the microphone.
 
-It can be used - and its main purpose is - to send data through radio transceivers.  
+It can be used - and its main purpose is - to send data through radio transceivers. See https://github.com/matteotenca/fm-transfer  
 
 This is a shell front-end which implements the sending/receiving of bare text or whole binary files, which are encoded in Base64.
 
@@ -44,12 +44,9 @@ $> pip install gg-transfer
 ```
 
 ##### Warning:
-**Under python version `>= 3.11`, `ggwave` may not install properly.**  
-To work around the problem, you should:
-1. Install `wheel`, `setuptools` and `cython` by hand with `pip`
-2. `export` (`set` under Windows) the variable `GGWAVE_USE_CYTHON` as `True`
-3. Issue the `pip install ggwave` command. A compiler is needed, i.e. `gcc` or `MSVSC`.
-
+On PyPi, `ggwave-wheels` is now required, altough it provides the very same functions of the original `ggwave` package.
+This is due to some glitches in the original `ggwave` install process under python `>=3.11`. `ggwave-wheels` provides 
+some pre-compiled wheels for `linux` and `windows` `x64` platforms.
 
 ### Test installation
 
@@ -58,7 +55,6 @@ $> git clone https://github.com/matteotenca/gg-transfer.git
 $> cd gg-transfer
 $> pip install --user -e .
 ```
-
 
 ### Examples:
 
