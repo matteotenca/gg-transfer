@@ -36,7 +36,7 @@ class GgHelpFormatter(argparse.RawTextHelpFormatter):
         return help_msg
 
 
-def is_postive_int(val: int) -> int:
+def is_postive_int(val: str) -> int:
     # try:
     val_int = int(val)
     if val_int > 0:

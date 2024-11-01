@@ -24,8 +24,8 @@ import sys
 import time
 from pathlib import Path
 from typing import Optional, Any, BinaryIO, TextIO, Union
-import pyaudio
-import ggwave
+import sounddevice as sd # type: ignore
+import ggwave # type: ignore
 
 from ._exceptions import GgIOError, GgChecksumError
 
@@ -46,11 +46,10 @@ class Receiver:
             self.tot_pieces = tot_pieces
 
     def receive(self, getdata: bool = True) -> Optional[str]:
-        p: Optional[pyaudio.PyAudio] = None
-        stream: Optional[pyaudio.Stream] = None
+        stream: Optional[sd.RawInputStream] = None
         instance: Optional[Any] = None
         file_path: Path = Path()
-        output: Union[io.BytesIO | BinaryIO | TextIO]
+        output: Union[io.BytesIO, BinaryIO, TextIO]
         is_stdout = self.outputfile is None or self.outputfile == "-"
 
         try:
@@ -65,11 +64,8 @@ class Receiver:
             else:
                 output = io.BytesIO()
 
-            p = pyaudio.PyAudio()
-
-            stream = p.open(format=pyaudio.paFloat32, channels=1, rate=48000,
-                            input=True, frames_per_buffer=1024)
-
+            stream = sd.RawInputStream(dtype="float32", channels=1, samplerate=float(48000), blocksize=4096)
+            stream.start()
             ggwave.disableLog()
             par = ggwave.getDefaultParameters()
             # par["SampleRate"] = 44100
@@ -96,13 +92,11 @@ class Receiver:
             if not getdata:
                 print('Listening ... Press Ctrl+C to stop', file=sys.stderr, flush=True)
             while True:
-                data = stream.read(1024, exception_on_overflow=False)
+                data, _ = stream.read(1024)
                 res = ggwave.decode(instance, data)
                 if res is not None:
                     st: str = res.decode("utf-8")
                     if not started and self.file_transfer_mode and st.startswith("{"):
-                        # if not getdata:
-                        #     print("Got Header", file=sys.stderr, flush=True)
                         js = json.loads(st)
                         pieces = js["pieces"]
                         filename = js["filename"]
@@ -135,8 +129,6 @@ class Receiver:
                         else:
                             break
                     elif not self.file_transfer_mode:
-                        # if not getdata:
-                        #     print("Got message", file=sys.stderr, flush=True)
                         output.write(res)
                         output.flush()
                         i += 1
@@ -184,10 +176,8 @@ class Receiver:
             if instance is not None:
                 ggwave.free(instance)
             if stream is not None:
-                stream.stop_stream()
+                stream.stop()
                 stream.close()
-            if p is not None:
-                p.terminate()
         if getdata and isinstance(output, io.BytesIO):
             ret: str = output.getvalue().decode("utf-8")
             return ret

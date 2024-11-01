@@ -17,39 +17,31 @@
 """
 import tempfile
 import unittest
-import wave
 from pathlib import Path
-
-import pyaudio
-
+import sounddevice as sd
 
 # noinspection PyPep8Naming
-class PyAudio(unittest.TestCase):
+class TestSoundDevice(unittest.TestCase):
 
     @unittest.skip("skipping test_record...")
     def test_record(self) -> None:
-        CHUNK = 1024
-        FORMAT = pyaudio.paInt32
-        CHANNELS = 1
-        RATE = 48000
-        RECORD_SECONDS = 20
+        try:
+            import soundfile as sf
+        except (ImportError, ModuleNotFoundError):
+            self.fail("soundfile module not found")
+        CHUNK: int = 1024
+        FORMAT: str = "float32"
+        CHANNELS: int = 1
+        RATE: float = float(48000)
+        RECORD_SECONDS: int = 5
         out_file = Path(tempfile.gettempdir()).absolute().joinpath('test.wav')
-        wf: wave.Wave_write
-        with wave.open(str(out_file), 'w') as wf:
-
-            p = pyaudio.PyAudio()
-            wf.setnchannels(CHANNELS)
-            wf.setsampwidth(p.get_sample_size(FORMAT))
-            wf.setframerate(RATE)
-
-            stream = p.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True)
-            print(f'Recording {RECORD_SECONDS} secs into {out_file}...')
-            for _ in range(0, RATE // CHUNK * RECORD_SECONDS):
-                wf.writeframes(stream.read(CHUNK))
-            print('Done')
-            stream.stop_stream()
-            stream.close()
-            p.terminate()
+        with sf.SoundFile(out_file, "wb", samplerate=int(RATE), channels=1, format='WAV', subtype="FLOAT") as wf:
+            with sd.RawInputStream(dtype=FORMAT, channels=CHANNELS, samplerate=RATE, blocksize=CHUNK) as stream:
+                print(f'Recording {RECORD_SECONDS} secs into {out_file}...')
+                for _ in range(0, int(RATE // CHUNK * RECORD_SECONDS)):
+                    data, overflow = stream.read(CHUNK)
+                    wf.buffer_write(data, "float32")
+                print('Done')
         self.assertEqual(True, True)  # add assertion here
 
 

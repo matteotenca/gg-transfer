@@ -20,8 +20,8 @@ import base64
 import binascii
 import sys
 import time
-import pyaudio
-import ggwave
+import sounddevice as sd # type: ignore
+import ggwave # type: ignore
 from pathlib import Path
 from typing import List, Optional, Tuple
 from ._exceptions import GgIOError, GgUnicodeError, GgArgumentsError
@@ -66,12 +66,9 @@ class Sender:
         self._sample_rate = 48000
 
     def send(self, msg: Optional[str] = None) -> None:
-        p: Optional[pyaudio.PyAudio] = None
-        stream: Optional[pyaudio.Stream] = None
+        stream: Optional[sd.RawOutputStream] = None
 
         try:
-            p = pyaudio.PyAudio()
-
             # 0 = Normal
             # 1 = Fast
             # 2 = Fastest
@@ -82,8 +79,8 @@ class Sender:
             # 7 = [DT] Fast
             # 8 = [DT] Fastest
 
-            stream = p.open(format=pyaudio.paFloat32, channels=1, rate=self._sample_rate, output=True,
-                            frames_per_buffer=4096)
+            stream = sd.RawOutputStream(dtype="float32", channels=1, samplerate=float(self._sample_rate), blocksize=4096)
+            stream.start()
             if self.input is not None and self.input != "-" and msg is None:
                 file_path = Path(self.input)
                 if not file_path.is_file():
@@ -106,7 +103,7 @@ class Sender:
                         print("Sending header, length:", len(header), flush=True, file=sys.stderr)
                         print("Pieces:", ln, flush=True, file=sys.stderr)
                         waveform = ggwave.encode(header, protocolId=self.protocol, volume=60)
-                        stream.write(waveform, len(waveform) // 4)
+                        stream.write(waveform)
                     else:
                         # print("Only the first 140 bytes of the file will be sent.", flush=True,
                         #       file=sys.stderr)
@@ -144,9 +141,8 @@ class Sender:
                 print(f"Piece {q-1}/{ln} {totsize} B", end="\r", flush=True, file=sys.stderr)
             t = time.time()
             for piece in ar:
-                # print(piece)
                 waveform = ggwave.encode(piece, protocolId=self.protocol, volume=60)
-                stream.write(waveform, len(waveform) // 4)
+                stream.write(waveform)
                 totsize += len(piece)
                 if self._script:
                     print(f"Piece {q}/{ln} {totsize} B", end="\r", flush=True, file=sys.stderr)
@@ -180,7 +176,5 @@ class Sender:
             raise e
         finally:
             if stream is not None:
-                stream.stop_stream()
+                stream.stop()
                 stream.close()
-            if p is not None:
-                p.terminate()
