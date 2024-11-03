@@ -20,6 +20,7 @@ import unittest
 from pathlib import Path
 import sounddevice as sd
 
+
 # noinspection PyPep8Naming
 class TestSoundDevice(unittest.TestCase):
 

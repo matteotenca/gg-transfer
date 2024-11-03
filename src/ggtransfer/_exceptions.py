@@ -15,8 +15,9 @@
         You should have received a copy of the GNU General Public License
         along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-class GgTransferError(Exception):
 
+
+class GgTransferError(Exception):
     msg: str
     _PREFIX: str
 
@@ -29,7 +30,6 @@ class GgTransferError(Exception):
 
 
 class GgIOError(GgTransferError):
-
     _PREFIX: str = "I/O - "
 
     def __init__(self, message: str):
@@ -37,7 +37,6 @@ class GgIOError(GgTransferError):
 
 
 class GgUnicodeError(GgTransferError):
-
     _PREFIX: str = "Data type mismatch - "
 
     def __init__(self, message: str):
@@ -45,7 +44,6 @@ class GgUnicodeError(GgTransferError):
 
 
 class GgArgumentsError(GgTransferError):
-
     _PREFIX: str = "Invalid arguments - "
 
     def __init__(self, message: str):
@@ -53,7 +51,6 @@ class GgArgumentsError(GgTransferError):
 
 
 class GgChecksumError(GgTransferError):
-
     _PREFIX: str = "Checksum error - "
 
     def __init__(self, message: str):

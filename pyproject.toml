@@ -24,6 +24,7 @@ classifiers = [
 ]
 urls = {Homepage = "https://github.com/matteotenca/gg-transfer"}
 dependencies = ["sounddevice", "ggwave-wheels>=0.4.2.3"]
+requires-python = ">=3.8"
 
 [project.scripts]
 gg-transfer = "ggtransfer.__main__:_main"

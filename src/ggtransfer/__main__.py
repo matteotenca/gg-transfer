@@ -17,10 +17,7 @@
 """
 import argparse
 from typing import Any
-from ._send import Sender
-from ._receive import Receiver
-from ._exceptions import GgArgumentsError
-from . import __version__
+from ggtransfer import Sender, Receiver, GgArgumentsError, __version__
 
 
 class GgHelpFormatter(argparse.RawTextHelpFormatter):
@@ -37,20 +34,22 @@ class GgHelpFormatter(argparse.RawTextHelpFormatter):
 
 
 def is_postive_int(val: str) -> int:
-    # try:
-    val_int = int(val)
+    try:
+        val_int = int(val)
+    except ValueError as e:
+        raise argparse.ArgumentTypeError("number of pieces must be a positive integer.") from e
     if val_int > 0:
         return val_int
     raise argparse.ArgumentTypeError("number of pieces must be a positive integer.")
 
 
 def _main() -> None:
-
     # noinspection PyTypeChecker
     parser = argparse.ArgumentParser(prog="gg-transfer",
                                      # formatter_class=GgHelpFormatter,
                                      description="Command line utility to send/receive "
                                                  "files/strings via ggwave library (FSK).")
+
     parser.add_argument(
         "-V", "--version",
         help="print version number.",
@@ -80,10 +79,6 @@ def _main() -> None:
         type=int,
         choices=range(0, 9)
     )
-    sender.add_argument(
-        "-f", "--file-transfer",
-        help="encode data in Base64 and use file transfer mode.",
-        action="store_true", default=False)
     sender.set_defaults(command="send")
 
     # noinspection PyTypeChecker
@@ -93,19 +88,25 @@ def _main() -> None:
     receiver.add_argument(
         "-o", "--output", help="output file (use '-' for stdout).", metavar="<outputfile>")
     receiver.add_argument(
-        "-f", "--file-transfer",
-        help="decode data from Base64 and use file transfer mode.",
-        action="store_true", default=False)
-    receiver.add_argument(
         "-w", "--overwrite",
         help="overwrite output file if it exists.",
         action="store_true", default=False)
     receiver.add_argument(
         "-n", "--tot-pieces",
         help="receive this number of pieces and exit. Minimum is 1, default no limit.",
-        default=-1, type=is_postive_int)
+        default=-1, type=is_postive_int, metavar="<pieces>")
 
     receiver.set_defaults(command="receive")
+
+    for sub in subparsers.choices.values():
+        sub.add_argument(
+            "-V", "--version",
+            help="print version number.",
+            action="version", version=f"gg-transfer {__version__}")
+        sub.add_argument(
+            "-f", "--file-transfer",
+            help="decode data from Base64 and use file transfer mode.",
+            action="store_true", default=False)
 
     args: argparse.Namespace = parser.parse_args()
 

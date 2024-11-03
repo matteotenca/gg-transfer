@@ -46,7 +46,7 @@ $> pip install gg-transfer
 ##### Warning:
 On PyPi, `ggwave-wheels` is now required, altough it provides the very same functions of the original `ggwave` package.
 This is due to some glitches in the original `ggwave` install process under python `>=3.11`. `ggwave-wheels` provides 
-some pre-compiled wheels for `linux` and `windows` `x64` platforms.
+some pre-compiled wheels for `linux x86_64`, `windows x86_64` and `macOS` platforms.
 
 ### Test installation
 
@@ -59,11 +59,11 @@ $> pip install --user -e .
 ### Examples:
 
 ```
-usage: gg-transfer send [-h] [-i <inputfile>] [-p {0,1,2,3,4,5,6,7,8}] [-f]
+usage: gg-transfer send [-h] [-i <inputfile>] [-p {0,1,2,3,4,5,6,7,8}] [-V] [-f]
 
 Command line utility to send/receive files/strings via ggwave library (FSK).
 
-options:
+optional arguments:
   -h, --help            show this help message and exit
   -i <inputfile>, --input <inputfile>
                         input file (use '-' for stdin).
@@ -78,20 +78,24 @@ options:
                         6 = [DT] Normal (3,72 Bytes/s - 1125 Hz to 2625 Hz)
                         7 = [DT] Fast (5,59 Bytes/s - 1125 Hz to 2625 Hz)
                         8 = [DT] Fastest (11,17 Bytes/s - 1125 Hz to 2625 Hz)
-  -f, --file-transfer   encode data in Base64 and use file transfer mode.
+  -V, --version         print version number.
+  -f, --file-transfer   decode data from Base64 and use file transfer mode.
 ```
 
 ```
-usage: gg-transfer receive [-h] [-o <outputfile>] [-f] [-w]
+usage: gg-transfer receive [-h] [-o <outputfile>] [-w] [-n <pieces>] [-V] [-f]
 
 Command line utility to send/receive files/strings via ggwave library (FSK).
 
-options:
+optional arguments:
   -h, --help            show this help message and exit
   -o <outputfile>, --output <outputfile>
                         output file (use '-' for stdout).
-  -f, --file-transfer   decode data from Base64 and use file transfer mode.
   -w, --overwrite       overwrite output file if it exists.
+  -n <pieces>, --tot-pieces <pieces>
+                        receive this number of pieces and exit. Minimum is 1, default no limit.
+  -V, --version         print version number.
+  -f, --file-transfer   decode data from Base64 and use file transfer mode.
 ```
 #### A simple string:
 

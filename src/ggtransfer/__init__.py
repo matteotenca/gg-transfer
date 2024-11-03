@@ -15,8 +15,10 @@
         You should have received a copy of the GNU General Public License
         along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-__version__ = '0.2.7'
+__version__ = '0.2.10'
 from ._send import Sender
 from ._receive import Receiver
-
-__all__ = ['Sender', 'Receiver', '__version__']
+from ._exceptions import (GgIOError, GgUnicodeError, GgArgumentsError, GgChecksumError,
+                          GgTransferError)
+__all__ = ['Sender', 'Receiver', 'GgIOError', 'GgUnicodeError', 'GgArgumentsError',
+           'GgChecksumError', 'GgTransferError', '__version__']
